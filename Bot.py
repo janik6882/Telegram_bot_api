@@ -18,9 +18,10 @@ class Wrapper():
         return json.loads(r.content)
 
 def main():
-    token = "Insert Token here"
+    data = json.load(open("creds.json", mode="r"))
+    token = data["token"]
+    myid = data["my_id"]
     test = Wrapper(token)
-    myid = "Insert ID here"
     x = test.send_tel("Hello", myid)
     print (x)
 
