@@ -107,6 +107,25 @@ class Wrapper():
         r = requests.post(url, data=params, files=file)
         return json.loads(r.content)
 
+    # TODO: Add send_audio, send_document, send_video, send_animation, send_voice, send_video_note and send_media_group
+    def send_location(self, long, lat, horizontalAccuracy=None, disableNotifiation=False):
+        """
+        Comment: send a location by it's longitude and latitude to a chatId
+        Input: Name of Instance, longitude, latitude, optional: accuracy and disableNotifiation
+        Output: Server Response as Json Object
+        Special: Nothing special
+        """
+        url = self.base + "/sendLocation"
+        params = {
+                  "longitude": long,
+                  "latitude": lat,
+                  "horizontal_accuracy": horizontalAccuracy,
+                  "disable_notification": disableNotifiation,
+        }
+        r = requests.get(url, params=params)
+        return json.loads(r.content)
+
+
 
 def main():
     data = json.load(open("creds.json", mode="r"))
