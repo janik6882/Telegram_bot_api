@@ -23,7 +23,7 @@ class Wrapper():
         res = json.loads(r.content)
         return res
 
-    def get_tells(self, offset=None, limit=None):
+    def get_update(self, offset=None, limit=None):
         """
         Comment: gets all recent messages sent to the bot by a certain offset
         Input: Name of instance, offset
@@ -55,15 +55,57 @@ class Wrapper():
         r = requests.get(url, params=params)
         return json.loads(r.content)
 
-    def forward_message(self, chatId, fromChatId, messageId):
+    def forward_message(self, chatId, fromChatId, messageId, disableNotifiation=False):
         """
         Comment: forwards a message by its fromChatId and its messageId to a
                chatId
-        Input: Name of Instance, chat to forward to, from chat, messageId
+        Input: Name of Instance, chat to forward to, from chat, messageId, optional: disableNotifiation
         Output: Server Response as Json
-        Special:
+        Special: Notification Sound can be disabled with disableNotifiation set to True
         """
+        url = self.base + "/forwardMessage"
+        params = {
+                  "chat_id": chatId,
+                  "from_chat_id": fromChatId,
+                  "message_id": messageId,
+                  "disable_notification": disableNotifiation,
+        }
+        r = requests.get(url, params=params)
+        return json.loads(r.content)
 
+    def copy_message(self, chatId, fromChatId, messageId, disableNotifiation=False):
+        """
+        Comment: copy a message and send it to another chat
+        Input: Name of Instance, chatId, fromChatId, messageId, optional: disableNotifiation
+        Output: Server Response as Json
+        Special: Notification Sound can be disabled with disableNotifiation set to True
+        """
+        url = self.base + "/copyMessage"
+        params = {
+                  "chat_id": chatId,
+                  "from_chat_id": fromChatId,
+                  "message_id": messageId,
+                  "disable_notification": disableNotifiation,
+                }
+        r = requests.get(url, params=params)
+        return json.loads(r.content)
+
+    def send_photo(self, chatId, filename, caption=None, disableNotifiation=False):
+        """
+        Comment: send a photo to a user specified by their chatId
+        Input: Name of Instance, chatId, filename of the photo, optional: caption
+        Output: Server Response as Json
+        Special: max filesize: 10MB, max width and height: 10000
+        """
+        url = self.base + "/sendPhoto"
+        params = {
+                  "chat_id": chatId,
+                  "caption": caption,
+                  "disable_notification": disableNotifiation,
+        }
+        file = {"photo": open(filename, "rb")}
+        r = requests.post(url, data=params, files=file)
+        return json.loads(r.content)
 
 
 def main():
@@ -71,7 +113,7 @@ def main():
     token = data["token"]
     myid = data["my_id"]
     test = Wrapper(token)
-    x = test.get_me()
+    x = test.send_photo(myid, "test.jpg", "Dies ist ein Test", "True")
     # for i in x["result"]:
     print (x)
 
