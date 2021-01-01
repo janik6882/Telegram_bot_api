@@ -191,6 +191,7 @@ class Wrapper():
         Output: Server Response as Json
         Special: You have to send a OPUS encoded .ogg file with max 50MB
         """
+        # TODO: Revisit and add additional params
         url = self.base + "/sendVoice"
         data = {
                 "chat_id": chatId,
@@ -201,7 +202,44 @@ class Wrapper():
         r = requests.post(url, data=data, files=file)
         return json.loads(r.content)
 
-    # TODO: Add send_voice, send_video_note and send_media_group
+    def send_video_note(self, chatId, filename, disableNotifiation=False):
+        """
+        Comment: send a "video-note" to a chatId
+        Input: Name of Instance, chatId, filename, optional: disableNotifiation
+        Output: Server Response as Json
+        Special: .mp4 files must be max 1 Minute long
+        """
+        # TODO: Revisit and add additional params
+        # BUG: Sends as Video, gif and else. Video Note?
+        url = self.base + "/sendVideoNote"
+        data = {
+                "chat_id": chatId,
+                "disable_notification": disableNotifiation,
+        }
+        file = {"video_note": open(filename, "rb")}
+        r = requests.post(url, data=data, files=file)
+        return json.loads(r.content)
+
+    def send_media_group(self, chatId, filenames, disableNotifiation=False):
+        """
+        Comment: send multiple Media items to a chatId
+        Input: Name of Instance, chatId, Filenames as List, optional: disableNotifiation
+        Output: Server Response as Json
+        Special: Nothing special
+        """
+        # BUG: Wont send media, revisit later
+        url = self.base + "/sendMediaGroup"
+        data = {
+                "chat_id": chatId,
+                "disable_notification": disableNotifiation,
+        }
+        files = []
+        for file in filenames:
+            files.append(("media", (open(file, "rb"))))
+        print (files)
+        r = requests.post(url, data=data, files=files)
+        return json.loads(r.content)
+
     def send_location(self, chatId, long, lat, horizontalAccuracy=None, disableNotifiation=False, livePeriod=None, heading=None):
         """
         Comment: send a location by it's longitude and latitude to a chatId
@@ -271,7 +309,7 @@ def main():
     token = data["token"]
     myid = data["my_id"]
     test = Wrapper(token)
-    x = test.send_voice(myid, "sample.ogg", "just a test", True)
+    x = test.send_media_group(myid, ["sample2.mp4", "sample.mp4"], True)
     # for i in x["result"]:
     print (x)
 
