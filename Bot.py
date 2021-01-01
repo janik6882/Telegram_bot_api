@@ -30,6 +30,7 @@ class Wrapper():
         Output: Server Response with all received messages
         Special: offset is the first update_id which should be returned
         """
+        # TODO: Revisit and add additional params
         url = self.base + "/getUpdates"
         params = {
                   "offset": offset,
@@ -46,6 +47,7 @@ class Wrapper():
         Special: The user must first send a message to the bot before the bot
                 can send messages to the user.
         """
+        # TODO: Revisit and add additional params
         # TODO: Add optional Params from Doku
         url = self.base + "/sendMessage"
         params = {
@@ -63,6 +65,7 @@ class Wrapper():
         Output: Server Response as Json
         Special: Notification Sound can be disabled with disableNotifiation set to True
         """
+        # TODO: Revisit and add additional params
         url = self.base + "/forwardMessage"
         params = {
                   "chat_id": chatId,
@@ -80,6 +83,7 @@ class Wrapper():
         Output: Server Response as Json
         Special: Notification Sound can be disabled with disableNotifiation set to True
         """
+        # TODO: Revisit and add additional params
         url = self.base + "/copyMessage"
         params = {
                   "chat_id": chatId,
@@ -97,6 +101,7 @@ class Wrapper():
         Output: Server Response as Json
         Special: max filesize: 10MB, max width and height: 10000
         """
+        # TODO: Revisit and add additional params
         url = self.base + "/sendPhoto"
         params = {
                   "chat_id": chatId,
@@ -114,17 +119,89 @@ class Wrapper():
         Output: Server Response as Json
         Special: You may Send .mp4 and .mp3 with up to 50MB
         """
+        # TODO: Revisit and add additional params
         url = self.base + "/sendAudio"
         data = {
                 "chat_id": chatId,
                 "caption": caption,
-                "disable_notifiation": disableNotifiation,
+                "disable_notification": disableNotifiation,
         }
         file = {"audio": open(filename, "rb")}
         r = requests.post(url, data=data, files=file)
         return json.loads(r.content)
 
-    # TODO: Add send_audio, send_document, send_video, send_animation, send_voice, send_video_note and send_media_group
+    def send_document(self, chatId, filename, caption=None, disableNotifiation=False):
+        """
+        Comment: send a document to a chatId by it's filename
+        Input: Name of Instance, chatId, filename, optional: caption, disableNotifiation
+        Output: Server Response as Json
+        Special: You may send files with up to 50MB
+        """
+        # TODO: Revisit and add additional params
+        url = self.base + "/sendDocument"
+        data = {
+                "chat_id": chatId,
+                "caption": caption,
+                "disable_notification": disableNotifiation,
+        }
+        file = {"document": open(filename, "rb")}
+        r = requests.post(url, data=data, files=file)
+        return json.loads(r.content)
+
+    def send_video(self, chatId, filename, caption=None, disableNotifiation=False):
+        """
+        Comment: send a video by it's filename to a chatId
+        Input: Name of Instance, chatId, filename, optional: caption, disableNotifiation
+        Output: Server Response as Json
+        Special: You may send .mp4 with up to 50MB
+        """
+        # TODO: Revisit and add additional params
+        url = self.base + "/sendVideo"
+        data = {
+                "chat_id": chatId,
+                "caption": caption,
+                "disable_notification": disableNotifiation,
+        }
+        file = {"video": open(filename, "rb")}
+        r = requests.post(url, data=data, files=file)
+        return json.loads(r.content)
+
+    def send_animation(self, chatId, filename, caption=None, disableNotifiation=False):
+        """
+        Comment: send an animation by it's filename to a chatId
+        Input: Name of Instance, chatId, filename, optional: caption, disableNotifiation
+        Output: Server Response as Json
+        Special: You may send .gif and h.264 without Sound with up to 50MB, only tested with .gif
+        """
+        # TODO: Revisit and add additional params
+        url = self.base + "/sendAnimation"
+        data = {
+                "chat_id": chatId,
+                "caption": caption,
+                "disable_notification": disableNotifiation,
+        }
+        file = {"animation": open(filename, "rb")}
+        r = requests.post(url, data=data, files=file)
+        return json.loads(r.content)
+
+    def send_voice(self, chatId, filename, caption=None, disableNotifiation=False):
+        """
+        Comment: send a voice message by it's filename to a chatId
+        Input: Name of Instance, chatId, filename, optional: caption, disableNotifiation
+        Output: Server Response as Json
+        Special: You have to send a OPUS encoded .ogg file with max 50MB
+        """
+        url = self.base + "/sendVoice"
+        data = {
+                "chat_id": chatId,
+                "caption": caption,
+                "disable_notification": disableNotifiation,
+        }
+        file = {"voice": open(filename, "rb")}
+        r = requests.post(url, data=data, files=file)
+        return json.loads(r.content)
+
+    # TODO: Add send_voice, send_video_note and send_media_group
     def send_location(self, chatId, long, lat, horizontalAccuracy=None, disableNotifiation=False, livePeriod=None, heading=None):
         """
         Comment: send a location by it's longitude and latitude to a chatId
@@ -132,6 +209,7 @@ class Wrapper():
         Output: Server Response as Json Object
         Special: Nothing special
         """
+        # TODO: Revisit and add additional params
         # TODO: Live Location not working, fix later.
         url = self.base + "/sendLocation"
         params = {
@@ -151,6 +229,7 @@ class Wrapper():
         Output:
         Special:
         """
+        # TODO: Revisit and add additional params
         url = self.base + "/sendVenue"
         params = {
                   "chat_id": chatId,
@@ -183,7 +262,7 @@ class Wrapper():
         r = requests.get(url, params=params)
         return json.loads(r.content)
 
-    def send_dice(self, chatId, disableNotifiation=False):
+    # def send_dice(self, chatId, disableNotifiation=False):
 
 
 
@@ -192,7 +271,7 @@ def main():
     token = data["token"]
     myid = data["my_id"]
     test = Wrapper(token)
-    x = test.send_poll(myid, "Wer ist der groesste?", ["Janik", "Ich", "Der da"], correctOptionId=0, explanation="So schwer ist es nicht.", type="quiz")
+    x = test.send_voice(myid, "sample.ogg", "just a test", True)
     # for i in x["result"]:
     print (x)
 
