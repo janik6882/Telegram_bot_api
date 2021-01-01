@@ -107,6 +107,23 @@ class Wrapper():
         r = requests.post(url, data=params, files=file)
         return json.loads(r.content)
 
+    def send_audio(self, chatId, filename, caption=None, disableNotifiation=False):
+        """
+        Comment: send a audio message to a chat by chatId
+        Input: Name of Instance, chatId, filename, optional: caption, disableNotifiation
+        Output: Server Response as Json
+        Special: You may Send .mp4 and .mp3 with up to 50MB
+        """
+        url = self.base + "/sendAudio"
+        data = {
+                "chat_id": chatId,
+                "caption": caption,
+                "disable_notifiation": disableNotifiation,
+        }
+        file = {"audio": open(filename, "rb")}
+        r = requests.post(url, data=data, files=file)
+        return json.loads(r.content)
+
     # TODO: Add send_audio, send_document, send_video, send_animation, send_voice, send_video_note and send_media_group
     def send_location(self, chatId, long, lat, horizontalAccuracy=None, disableNotifiation=False, livePeriod=None, heading=None):
         """
@@ -145,23 +162,29 @@ class Wrapper():
         r = requests.get(url, params=params)
         return json.loads(r.content)
     # TODO: Add send_contact
-    def send_poll(self, chatId, question, options, correctOption=None, type=None):
+    def send_poll(self, chatId, question, options, correctOptionId=None, type=None, explanation=None, disableNotifiation=False):
         """
-        Comment: # TODO: Add docu
-        Input:
-        Output:
-        Special:
+        Comment: send a poll
+        Input: Name of Instance, chatId, question, options (a List with options), optional: correctOptionId (correct answer if type=="quiz" as index from options), type of poll (either "regular" or "quiz")
+        Output: Server Response as Json
+        Special: If type=="regular", correctOptionId must be specified
         """
+        # TODO: Complete further Params
         url = self.base + "/sendPoll"
         params = {
                   "chat_id": chatId,
                   "question": question,
-                  "options": options,
-                  "correct_option": correctOption,
+                  "options": json.dumps(options),
+                  "correct_option_id": correctOptionId,
                   "type": type,
+                  "explanation": explanation,
+                  "disable_notification": disableNotifiation,
         }
         r = requests.get(url, params=params)
         return json.loads(r.content)
+
+    def send_dice(self, chatId, disableNotifiation=False):
+
 
 
 def main():
@@ -169,7 +192,7 @@ def main():
     token = data["token"]
     myid = data["my_id"]
     test = Wrapper(token)
-    x = test.send_poll(myid, "Wer ist der groesste?", list(["Janik", "Ich", "Der da"]))
+    x = test.send_poll(myid, "Wer ist der groesste?", ["Janik", "Ich", "Der da"], correctOptionId=0, explanation="So schwer ist es nicht.", type="quiz")
     # for i in x["result"]:
     print (x)
 
